@@ -1,0 +1,8 @@
+Change-Id: I98511f78af91de7c98944284496147f0727e6ac4
+Code-Review+2: Kevron Rees <kevron.m.rees@intel.com>
+Verified+1: Kevron Rees <kevron.m.rees@intel.com>
+Submitted-by: Kevron Rees <kevron.m.rees@intel.com>
+Submitted-at: Tue, 04 Dec 2012 04:56:09 +0900
+Reviewed-on: http://review.tizen.org/gerrit/2473
+Project: profile/ivi/libwebsockets
+Branch: refs/heads/2.0alpha
