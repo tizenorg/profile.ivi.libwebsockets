@@ -1,6 +1,6 @@
 Name:       libwebsockets
 Summary:    WebSocket Library
-Version:    support_chrome_20_firefox_12_11_g71e5369
+Version:    1.2
 Release:    1
 Group:      System/Libraries
 License:    LGPLv2.1
@@ -49,4 +49,6 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/libwebsockets.h
-%{_libdir}/*
+%{_libdir}/libwebsockets.so
+%{_libdir}/pkgconfig/*
+
