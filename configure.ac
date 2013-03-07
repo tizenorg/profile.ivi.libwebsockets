@@ -8,7 +8,7 @@ AC_CONFIG_HEADERS([config.h])
 
 : ${CFLAGS=""}
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-AM_PROG_AR
+#AM_PROG_AR
 LT_INIT(shared)
 
 #AX_PTHREAD
