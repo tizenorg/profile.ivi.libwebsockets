@@ -49,4 +49,4 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/libwebsockets.h
-%{_libdir}/libwebsockets.so
+%{_libdir}/*
