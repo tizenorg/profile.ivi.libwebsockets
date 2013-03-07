@@ -26,7 +26,7 @@ Development files needed for building websocket clients and servers
 
 %build
 
-./autgen.sh
+./autogen.sh
 %configure
 
 make %{?jobs:-j%jobs}
