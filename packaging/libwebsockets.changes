@@ -1,3 +1,6 @@
+* Wed Apr 10 2013 tripzero <kevron.m.rees@intel.com>
+- merged with 2.0 branch for 2.0alpha
+
 * Thu Mar 07 2013 tripzero <kevron_m_rees@linux.intel.com> submit/2.0/20130307.212405@44857b2
 - Merge branch '2.0' of tizen:profile/ivi/libwebsockets into 2.0
 - pkgconfig install
