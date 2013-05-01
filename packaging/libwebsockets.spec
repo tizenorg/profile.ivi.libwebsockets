@@ -10,7 +10,7 @@ Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
-
+BuildRequires: cmake
 %description
 C Websockets Server Library
 
