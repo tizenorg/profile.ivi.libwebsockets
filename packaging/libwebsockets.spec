@@ -10,6 +10,7 @@ Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
+BuildRequires: cmake
 
 %description
 C Websockets Server Library
@@ -27,8 +28,7 @@ Development files needed for building websocket clients and servers
 
 %build
 
-./autogen.sh
-%configure --enable-openssl
+%cmake -DWITH_SSL=On
 
 make %{?jobs:-j%jobs}
 
