@@ -1,0 +1,8 @@
+Change-Id: I8a05fa0df147252237da3c965fa13a855a796dc2
+Code-Review+2: Rusty Lynch <rusty.lynch@intel.com>
+Verified+1: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-by: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-at: Fri, 10 May 2013 14:42:56 -0700
+Reviewed-on: https://review.tizen.org/gerrit/3518
+Project: profile/ivi/libwebsockets
+Branch: refs/heads/tizen
