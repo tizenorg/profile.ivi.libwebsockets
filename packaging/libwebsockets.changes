@@ -1,3 +1,7 @@
+* Mon Jun 03 2013 tripzero <kevron_m_rees@linux.intel.com> accepted/2.0/20130313.182558@8a05fa0
+- Switching to cmake based builds
+- updated chlog
+
 * Thu Mar 07 2013 tripzero <kevron_m_rees@linux.intel.com> submit/2.0/20130307.212405@44857b2
 - Merge branch '2.0' of tizen:profile/ivi/libwebsockets into 2.0
 - pkgconfig install
