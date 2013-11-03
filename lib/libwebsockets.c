@@ -37,6 +37,10 @@
 #include <netdb.h>
 #endif
 
+#ifdef HAVE_SYSTEMD_DAEMON
+#include <systemd/sd-daemon.h>
+#endif  /* HAVE_SYSTEMD_DAEMON */
+
 #ifdef LWS_OPENSSL_SUPPORT
 int openssl_websocket_private_data_index;
 #endif
@@ -2020,55 +2024,89 @@ libwebsocket_create_context(struct lws_context_creation_info *info)
 	/* set up our external listening socket we serve on */
 
 	if (info->port) {
-		int sockfd;
+		int sockfd = -1;
 
-		sockfd = socket(AF_INET, SOCK_STREAM, 0);
-		if (sockfd < 0) {
-			lwsl_err("ERROR opening socket\n");
-			goto bail;
+#ifdef HAVE_SYSTEMD_DAEMON
+		int const begin = SD_LISTEN_FDS_START;
+		int const end	= begin + sd_listen_fds(0);
+		int fd;
+
+		/*
+		 * Check if we have a systemd activated socket we can
+		 * use.	 Otherwise explicitly create the socket.
+		 */
+		for (fd = begin; fd < end; ++fd) {
+			if (sd_is_socket_inet(fd,
+					AF_INET,
+					SOCK_STREAM,
+					1,  // check if in accepting mode
+					info->port)) {
+				sockfd = fd;
+				lwsl_notice("Systemd socket activation "
+					    "succeeded.\n");
+				break;
+			}
 		}
 
+		if (sockfd == -1) {
+			if (end > begin) {
+				lwsl_warn("Systemd socket activation "
+					  "failed.\n"
+					  "Creating new socket instead.\n");
+			}
+#endif	/* HAVE_SYSTEMD_DAEMON */
+			sockfd = socket(AF_INET, SOCK_STREAM, 0);
+			if (sockfd < 0) {
+				lwsl_err("ERROR opening socket\n");
+				goto bail;
+			}
+
 #ifndef WIN32
-		/*
-		 * allow us to restart even if old sockets in TIME_WAIT
-		 * (REUSEADDR on Unix means, "don't hang on to this
-		 * address after the listener is closed."  On Windows, though,
-		 * it means "don't keep other processes from binding to
-		 * this address while we're using it)
-		 */
-		setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
+			/*
+			 * allow us to restart even if old sockets in TIME_WAIT
+			 * (REUSEADDR on Unix means, "don't hang on to this
+			 * address after the listener is closed."  On Windows, though,
+			 * it means "don't keep other processes from binding to
+			 * this address while we're using it)
+			 */
+			setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
 					      (const void *)&opt, sizeof(opt));
 #endif
 
-		/* Disable Nagle */
-		opt = 1;
-		setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY,
+			/* Disable Nagle */
+			opt = 1;
+			setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY,
 					      (const void *)&opt, sizeof(opt));
 
-		#ifdef WIN32
-		opt = 0;
-		ioctlsocket(sockfd, FIONBIO, (unsigned long *)&opt);
-		#else
-		fcntl(sockfd, F_SETFL, O_NONBLOCK);
-		#endif
+			#ifdef WIN32
+			opt = 0;
+			ioctlsocket(sockfd, FIONBIO, (unsigned long *)&opt);
+			#else
+			fcntl(sockfd, F_SETFL, O_NONBLOCK);
+			#endif
 
-		bzero((char *) &serv_addr, sizeof(serv_addr));
-		serv_addr.sin_family = AF_INET;
-		if (info->iface == NULL)
-			serv_addr.sin_addr.s_addr = INADDR_ANY;
-		else
-			interface_to_sa(info->iface, &serv_addr,
+			bzero((char *) &serv_addr, sizeof(serv_addr));
+			serv_addr.sin_family = AF_INET;
+			if (info->iface == NULL)
+				serv_addr.sin_addr.s_addr = INADDR_ANY;
+			else
+				interface_to_sa(info->iface, &serv_addr,
 						sizeof(serv_addr));
-		serv_addr.sin_port = htons(info->port);
+			serv_addr.sin_port = htons(info->port);
 
-		n = bind(sockfd, (struct sockaddr *) &serv_addr,
+			n = bind(sockfd, (struct sockaddr *) &serv_addr,
 							     sizeof(serv_addr));
-		if (n < 0) {
-			lwsl_err("ERROR on binding to port %d (%d %d)\n",
+			if (n < 0) {
+				lwsl_err("ERROR on binding to port %d (%d %d)\n",
 							info->port, n, errno);
-			close(sockfd);
-			goto bail;
+				close(sockfd);
+				goto bail;
+			}
+
+			listen(sockfd, LWS_SOMAXCONN);
+#ifdef HAVE_SYSTEMD_DAEMON
 		}
+#endif	/* HAVE_SYSTEMD_DAEMON */
 
 		wsi = (struct libwebsocket *)malloc(
 					sizeof(struct libwebsocket));
@@ -2090,9 +2128,9 @@ libwebsocket_create_context(struct lws_context_creation_info *info)
 		context->listen_service_count = 0;
 		context->listen_service_fd = sockfd;
 
-		listen(sockfd, LWS_SOMAXCONN);
 		lwsl_notice(" Listening on port %d\n", info->port);
 	}
+
 #endif
 
 	/*
