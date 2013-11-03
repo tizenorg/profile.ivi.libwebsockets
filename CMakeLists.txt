@@ -48,6 +48,7 @@ option(WITHOUT_DEBUG "Don't compile debug related code" OFF)
 option(WITHOUT_EXTENSIONS "Don't compile with extensions" OFF)
 option(WITH_LATENCY "Build latency measuring code into the library" OFF)
 option(WITHOUT_DAEMONIZE "Don't build the daemonization api" OFF)
+option(WITH_SD_DAEMON "Build support for systemd based socket activation" OFF)
 
 if (WITHOUT_CLIENT AND WITHOUT_SERVER)
 	message(FATAL_ERROR "Makes no sense to compile without both client or server.")
@@ -355,6 +356,19 @@ set(LIB_LIST)
 #
 # Find libraries.
 #
+
+#
+# SD_DAEMON (Only needed if systemd socket activation is desired.)
+#
+if (WITH_SD_DAEMON)
+	find_package(PkgConfig)
+	pkg_check_modules(SD_DAEMON REQUIRED libsystemd-daemon)
+
+	include_directories(${SD_DAEMON_INCLUDE_DIRS})
+	list(APPEND LIB_LIST ${SD_DAEMON_LIBRARIES})
+	add_definitions(${SD_DAEMON_CFLAGS_OTHER})
+	add_definitions(-DHAVE_SYSTEMD_DAEMON)
+endif()
 
 #
 # ZLIB (Only needed for deflate extensions).

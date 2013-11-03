@@ -19,6 +19,13 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_CONFIG_MACRO_DIR([m4])
 
+PKG_CHECK_MODULES([SD_DAEMON],
+                  [libsystemd-daemon],
+                  [AC_DEFINE([HAVE_SYSTEMD_DAEMON])],
+		  [AC_MSG_NOTICE([Systemd socket activation won't be enabled])])
+AC_SUBST([SD_DAEMON_LIBS])
+AC_SUBST([SD_DAEMON_CFLAGS])
+
 applyhash='CFLAGS+= -DLWS_LIBRARY_VERSION=\"$(PACKAGE_VERSION)\" -DLWS_BUILD_HASH=\"${shell git log -n 1 --pretty=%h}\"'
 AC_SUBST([applyhash])
 AM_SUBST_NOTMAKE([applyhash])

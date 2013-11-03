@@ -11,6 +11,7 @@ Requires(postun): /sbin/ldconfig
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
 BuildRequires: cmake
+BuildRequires: pkgconfig(libsystemd-daemon)
 
 %description
 C Websockets Server Library
@@ -28,7 +29,7 @@ Development files needed for building websocket clients and servers
 
 %build
 
-%cmake -DWITH_SSL=On
+%cmake -DWITH_SSL=On -DWITH_SD_DAEMON=ON
 
 make %{?jobs:-j%jobs}
 
