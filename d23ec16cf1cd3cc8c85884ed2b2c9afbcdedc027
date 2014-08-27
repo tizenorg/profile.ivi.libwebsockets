@@ -1,0 +1,9 @@
+Code-Review+2: Casey Schaufler <casey.schaufler@intel.com>
+Code-Review+1: José Bollo <jose.bollo@open.eurogiciel.org>
+Code-Review+1: Philippe Coval <philippe.coval@open.eurogiciel.org>
+Verified+1: Kévin THIERRY <kevin.thierry@open.eurogiciel.org>
+Submitted-by: Casey Schaufler <casey.schaufler@intel.com>
+Submitted-at: Wed, 27 Aug 2014 09:20:55 -0700
+Reviewed-on: https://review.tizen.org/gerrit/26326
+Project: profile/ivi/libwebsockets
+Branch: refs/heads/tizen
